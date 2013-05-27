@@ -22,10 +22,11 @@ Camera cam;
 float light0Position[4];
 
 // Game states
-#define GAME_STATE 0
-#define GAME_RUNNING 1
+#define GAME_START 0
+#define GAME_LOADING 1
+#define GAME_RUNNING 2
 
-int gameState = GAME_RUNNING;
+int gameState = GAME_LOADING;
 
 // List of objects to render
 std::vector<Renderable *> renderList;
@@ -81,9 +82,11 @@ void GraphicsInit(int argc, char** argv)
 }
 
 void gameLogic() {
-	if (gameState == GAME_RUNNING) {
+	if (gameState == GAME_LOADING) {
 		room = Room();
 		room.setLevel(1);
+		gameState = GAME_RUNNING;
+	} else if (gameState == GAME_RUNNING) {
 		renderList.push_back((Renderable *)&room);
 	}
 }
@@ -99,8 +102,9 @@ void display() {
 	gameLogic();
 
 	// Draw
-	for(unsigned i = 0; i<renderList.size(); i++)
+	for (unsigned int i = 0; i<renderList.size(); ++i) {
 		renderList[i]->render();
+	}
 
 	renderList.clear();
 
